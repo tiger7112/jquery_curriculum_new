@@ -12,7 +12,7 @@
   <body>
     <div class="wrapper">
       <ul class="nav clearfix">
-        <li>HOME</li>
+        <li class="active">HOME</li>
         <li>NEWS</li>
         <li>MYPAGE</li>
       </ul>
@@ -30,6 +30,21 @@
       // .eq() 引数に応じたindexの要素を指定します。
       // .addClass() クラスを追加します。
       // .removeClass() クラスを削除します。
+      $(function(){
+
+        $(".nav").find("li").on("click",function(){
+            var index = $(this).index();
+          $(".contents").find("li")
+            .addClass("is-hidden")
+            .eq(index)
+            .removeClass("is-hidden")
+        });
+        
+        // .eq=今回で言うと[$(this).index();]で受け取った順番をうける
+
+        // ⭐︎アンサーファースト
+
+      });
     </script>
   </body>
 </html>

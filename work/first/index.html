@@ -70,15 +70,113 @@
 <script src="../../common/js/jquery.js"></script>
 <script>
 // 第1問  id='q1'の要素の文字色を赤色にせよ。
+  $(function() {
+
+    $('#q1').css('color','red');
+  //セレクタ メソッド（プロパティ,値）;
+// まず、指定したい要素をセレクタとして＄()に入れます。
+// 今回の場合は＃q１です。この＃はidを指定するときに使う記号で、
+// クラスを指定したい場合には、「.」を使用します。
+// 次にメソッドで引数を用いて処理を実行するのですが、
+// 今回はcssメソッドを使い、
+// 文字色を変更するために、第一引数にプロパティとしてcolorと第二引数の値としてred使用して、
+// 文字色を赤色にしました。
+
+
 // 第2問  id='q2'の要素をクリックしたら背景色をピンクにせよ。
+    $('#q2').click(function() {
+      $(this).css('background-color', 'pink');
+    });
+// 今回は＃q２をセレクタに指定し、次にクリックした際に中の関数が実行される
+// クリックメソッドを使いました。
+// 関数内にはまずそのイベントを発火させた要素を参照する「this」をセレクタに指定し、
+// cssメソッドを使って第一引数にはプロパティのバックグラウンドカラー、
+// 第二引数には値のピンクを入れ、クリックした際に背景色がピンクになるよう変えました。
+
+    // [this]イベントを発火させた要素 #大事
+
+
 // 第3問  id='q3'の要素をクリックしたら2秒かけてフェードアウトさせよ。
+    $('#q3').click(function(){
+      　$(this).fadeOut(2000);
+    　});
+
+  // ⭐︎アンサーファースト
+
+
 // 第4問  id='q4'の要素をクリックしたらこの要素の前後とこの要素内の前後にテキストを挿入せよ。
+    $('#q4').click(function() {
+      $(this)
+        .prepend('DOMの中の前')
+        .append('DOMの中の後')
+        .before('DOMの前')
+        .after('DOMの後');
+    });
+
+// 開始タグ等でイメージ
+// メソッドチェーン
+
+  // ⭐︎アンサーファースト
+
+
 // 第5問  id='q5'の要素をクリックしたらこの要素にlargeというクラスを付与せよ。
+    $('#q5').click(function() {
+      $(this).addClass('large');
+    });
+
+  // ⭐︎アンサーファースト
+
 // 第6問  id='q6'の要素をクリックしたらこの要素を2秒かけてmargin-topとmargin-leftを100pxの位置に移動させよ。
+    $('#q6').click(function() {
+      $(this).animate({
+        'marginLeft': 100,
+        'marginTop': 100
+      }, 2000);
+    });
+
+  // ⭐︎アンサーファースト
+// なぜオブジェクトでないといけない理由
+// クリックメソッドは必ず関数を使う
+
 // 第7問  id='q7'の子要素をクリックしたら、その要素のインデックス（何番目か）をconsole.log()とalert()を用いて表示させよ。
+    $('#q7').find('li').click(function() {
+      var targetNum = $(this).index();
+      console.log(targetNum);
+      alert(targetNum);
+    });
+
+  // ⭐︎アンサーファースト
+
 // 第8問  id='q8'の要素をhoverしたらlargeというクラスを付与し、hoverが外れたら、クラスを削除せよ。
+    $('#q8').hover(function() {
+      $(this).addClass('large');
+    }, function() {
+      $(this).removeClass('large');
+    });
+
+  // ⭐︎アンサーファースト
+
 // 第9問  id='q9'の要素をクリックしたらこの要素に設定してあるdata属性をconsoleに表示せよ。
+    $('#q9').click(function() {
+      var text = $(this).data('text');
+      console.log(text);
+    });
+
+  // ⭐︎アンサーファースト
+
 // 第10問 id='q10'の子要素をクリックしたら、その要素のインデックスと等しいid='q11'の子要素にlargeというクラスを追加せよ。
+    $('#q10').find('li').click(function() {
+      var num = $(this).index();
+      $('#q11').find('li')
+        .eq(num)
+        .addClass('large');
+    });
+
+  // ⭐︎アンサーファースト
+
+
+
+  });
 </script>
 </body>
 </html>

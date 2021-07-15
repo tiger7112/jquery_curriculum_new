@@ -84,6 +84,7 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+
       // 今回やるのはソート機能です。
       // selectボックスをクリックして言語を選び、その言語と関係のあるリストだけが表示されるプログラムです。
       // [処理の流れ]
@@ -97,6 +98,32 @@
       // .data('') DOM要素にあるdata-~を取得できる
       // .change() セレクトボックスの値の変更をキャッチする関数
       // $().each() DOM要素を1つずつループ処理をする（ループ内で$(this)を使うと要素がひとつずつ取得できる）
+    $(function(){
+      
+      $('.select').change(function() {
+        var selectVal = $(this).val();
+        if(selectVal === 'all') {
+          $('.list').children('li').show();
+        }else{
+          $('.list').children('li').each(function(index, list) {
+            if(selectVal === $(list).data('category-type')) {
+              $(list).show();
+            }else {
+              $(list).hide();
+            }
+          })
+        }
+      });
+
+
+    });
     </script>
   </body>
 </html>
+<!-- 
+.each
+各繰り返し処理で実行したい関数を指定します。
+index
+各要素のインデックス番号です。
+Element
+繰り返し処理中の要素を参照します。 -->
