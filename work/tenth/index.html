@@ -28,6 +28,8 @@
     <script src="../../common/js/jquery.js"></script>
     <script src="./js/appid.js"></script>
     <script>
+      
+
       // 楽天ブックスの総合検索APIを使って製作してください。
       // answerの挙動を良く見てね！
       //
@@ -41,20 +43,137 @@
       // $.each(配列, function functionName() {}) 配列に対しての繰り返し処理が行えます。
       // $.ajax({}) 外部ファイルやURLに対してデータをリクエストすることができます。
       // 以下は今回使う$.ajaxの基本的な形です。
-      //
-      // $.ajax({
-      //   url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
-      //   type: 'GET',
-      //   datatype: 'json',
-      //   data: {
-      //     // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
-      //     applicationId: appId, (今回はこの変数をIDとして使用します) ※メンターから別途渡されるファイルを読み込んでください。
-      //     booksGenreId: '001'
-      //   },
-      // }).done(function(data) {
-      //   // この中にデータ取得後の動きを記述していきます。
-      //   console.log(data);
-      // });
+      $(function () {
+        var currentPage = null;
+        var searchWord = '';
+
+        $('[data-js="search-btn"]').on('click', function() {
+          pageReset();
+          currentPage = 1;
+          searchWord = $('[data-js="search-word"]').val();
+          getBookData();
+          console.log('aaa');
+        });
+
+        $(document).on('click','[data-js="page-next"]', function(e){
+          e.preventDefault();
+          if ($(this).hasClass('disabled')) {
+            return false;
+          }
+          pageReset();
+          currentPage++;
+          getBookData();
+        });
+
+        $(document).on('click','[data-js="page-prev"]', function(e) {
+          e.preventDefault();
+          if ($(this).hasClass('disabled')) {
+            return false;
+          }
+          pageReset();
+          currentPage--;
+          getBookData();
+        });
+
+        function pageReset() {
+          $('.lists').empty();
+          $('.message').empty();
+          $('[data-js="pager"]').remove();
+        }
+
+        function getBookData() {
+          $.ajax({
+            url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404',
+            type: 'GET',
+            datatype: 'json',
+            data: {
+              // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
+              applicationId: appId,
+              //  (今回はこの変数をIDとして使用します) ※メンターから別途渡されるファイルを読み込んでください。
+              booksGenreId: '001',
+              keyword: searchWord,
+              page: currentPage ,
+              hits: 20
+            },
+          }).done(function(data) {
+            if (data.hits === 0) {
+              $('.message').append('検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
+              return false; 
+              // ガード節
+            }
+            showList(data.Items);
+            showPager(data);
+          }).fail(function(error) {
+            console.log(error);
+            showErrorMessage(error.status);
+          });
+            
+          function showList(Books) {
+            var list = '';
+            $.each(Books,function(index,item){
+              list += '<li class="lists__item">' + 
+                            '<div class="lists__item__inner">' + 
+                              '<a href="' + item.Item.itemUrl + '" class="lists__item__link" target="_blank">' + 
+                                '<img src="' + item.Item.largeImageUrl + '" class="lists__item__img" alt="">' + 
+                                '<p class="lists__item__detail">作品名：' + item.Item.title + '</p>' + 
+                                '<p class="lists__item__detail">作者　：' + item.Item.author + '</p>' + 
+                                '<p class="lists__item__detail">出版社：' + item.Item.publisherName + '</p>' + 
+                              '</a>' + 
+                            '</div>' + 
+                          '</li>';
+            });
+            $('.lists').append(list);
+          }
+
+          function showPager(data) {
+            var pager = '<div class="pager" data-js="pager">' + 
+                          '<div class="counter">' + 
+                            '<span class="counter-current">' + data.page + '</span>/<span class="counter-all">' + data.pageCount + '</span>' + 
+                          '</div>' + 
+                          '<div class="btn-wrapper">' +
+                            '<a class="btn-item" data-js="page-prev" href="">前へ</a>' + 
+                            '<a class="btn-item" data-js="page-next" href="">次へ</a>' + 
+                          '</div>' +
+                        '</div>';
+            $('.lists').after(pager);
+
+            if(data.page === 1) {
+              $('[data-js="page-prev"]').addClass('disabled');
+            }
+
+            if(data.page === data.pageCount) {
+              $('[data-js="page-next"]').addClass('disabled');
+            }
+          }
+
+          function showErrorMessage(status) {
+            if(status === 400) {
+              $('.message').append('検索文字が入力されていません。');
+            }
+
+            if(status === 404) {
+              $('.message').append('検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
+            }
+
+            if(status === 429) {
+              $('.message').append('APIリクエスト数が上限に達した場合のエラーです。<br>しばらく時間を空けてから、ご利用ください。');
+            }
+
+            if(status === 500) {
+              $('.message').append('システムエラー。<br>長時間続くようであれば、こちらよりごお問い合わせください。');
+            }
+
+            if(status === 503) {
+              $('.message').append('サービスがメンテナンス中です。');
+            }
+
+            if(status === 0) {
+              $('.message').append('オフラインのためこのWebページを表示できません。');
+            }
+
+          }
+        }
+      });
       //
       //
       // $.ajaxによってデータが取得できたら、必要なデータ(作品名とか作者名とか)を取得します。
@@ -87,6 +206,7 @@
       //     <a class="btn-item" data-js="page-next" href="">次へ</a>
       //   </div>
       // </div>
+      // });
     </script>
   </body>
 </html>
