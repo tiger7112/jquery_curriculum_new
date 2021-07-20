@@ -43,6 +43,21 @@
       // $.each(配列, function functionName() {}) 配列に対しての繰り返し処理が行えます。
       // $.ajax({}) 外部ファイルやURLに対してデータをリクエストすることができます。
       // 以下は今回使う$.ajaxの基本的な形です。
+
+
+      // 検索ボタンを押した時の＜実行＞（①②）
+      // 「次へ」を押した時の＜実行＞（①②）
+      // 「前へ」を押した時の＜実行＞（①②）
+      // - data取得が成功した時の＜実行＞（③④）
+      // - data取得が失敗した時の＜実行＞（⑦）
+      // ①ajaxでデータを取得する＜処理＞
+      // - ②再検索・次へ・前へを押した時の＜処理＞
+      // - ③検索内容を表示させる＜処理＞
+      // - ④検索内容のページャを表示させる＜処理＞
+      //   - ⑤「前へ」を非活性にする＜処理＞
+      //   - ⑥「次へ」を非活性にする＜処理＞
+      // - ⑦エラー時に表示させる＜処理＞
+
       $(function () {
         var currentPage = null;
         var searchWord = '';
@@ -52,7 +67,6 @@
           currentPage = 1;
           searchWord = $('[data-js="search-word"]').val();
           getBookData();
-          console.log('aaa');
         });
 
         $(document).on('click','[data-js="page-next"]', function(e){
@@ -98,16 +112,14 @@
           }).done(function(data) {
             if (data.hits === 0) {
               $('.message').append('検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
-              return false; 
-              // ガード節
+              return false;
             }
             showList(data.Items);
             showPager(data);
           }).fail(function(error) {
-            console.log(error);
             showErrorMessage(error.status);
           });
-            
+
           function showList(Books) {
             var list = '';
             $.each(Books,function(index,item){
