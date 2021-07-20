@@ -98,6 +98,7 @@
         function getBookData() {
           $.ajax({
             url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404',
+            // https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404?applicationId=[アプリID]&keyword=%E6%9C%AC&NGKeyword=%E4%BA%88%E7%B4%84&sort=%2BitemPrice
             type: 'GET',
             datatype: 'json',
             data: {
@@ -159,30 +160,33 @@
           }
 
           function showErrorMessage(status) {
-            if(status === 400) {
-              $('.message').append('検索文字が入力されていません。');
-            }
+            $('.message').empty();
 
-            if(status === 404) {
-              $('.message').append('検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
-            }
+            switch(true) {
+              case status === 400:
+                $('.message').append('検索文字が入力されていません。');
+                break;
 
-            if(status === 429) {
-              $('.message').append('APIリクエスト数が上限に達した場合のエラーです。<br>しばらく時間を空けてから、ご利用ください。');
-            }
+              case status === 404:
+                $('.message').append('検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
+                break;
 
-            if(status === 500) {
-              $('.message').append('システムエラー。<br>長時間続くようであれば、こちらよりごお問い合わせください。');
-            }
+              case status === 429:
+                $('.message').append('リクエスト過多です。しばらく時間を置いてからお試しください。');
+                break;
 
-            if(status === 503) {
-              $('.message').append('サービスがメンテナンス中です。');
-            }
+              case status === 500:
+                $('.message').append('システムエラー。<br>長時間続くようであれば、こちらよりごお問い合わせください。');
+                break;
 
-            if(status === 0) {
-              $('.message').append('オフラインのためこのWebページを表示できません。');
-            }
+              case status === 503:
+                $('.message').append('サービスがメンテナンス中です。');
+                break;
 
+              case status === 0:
+                $('.message').append('オフラインのためこのWebページを表示できません。');
+                break;
+            }
           }
         }
       });
